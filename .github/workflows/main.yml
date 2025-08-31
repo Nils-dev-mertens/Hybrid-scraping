@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: install dependencies
-        working-directory: server
+        working-directory: ./server
         run: npm install
           
   builddockerimage:
