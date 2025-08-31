@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",                      // Moderne JavaScript features
+    "module": "CommonJS",                   // Nodig voor Node.js zonder ESM
+    "moduleResolution": "node",             // Vind modules zoals Node.js dat doet
+    "rootDir": "src",                    // Waar de source-bestanden staan
+    "outDir": "./dist",                     // Waar de gecompileerde JS komt (optioneel)
+    "esModuleInterop": true,                // Laat default imports toe
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,                         // TypeScript striktheid
+    "skipLibCheck": true                    // Sla type checks over in node_modules
+  },
+  "include": ["src/*/*.ts"]
+}
