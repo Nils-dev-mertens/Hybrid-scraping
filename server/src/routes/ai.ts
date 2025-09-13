@@ -1,8 +1,6 @@
 import express, { RequestHandler } from "express";
 import fs from "fs";
 import { generateRandomString } from "../utils/string";
-import { Aimodel, Extension, ExtensionInput } from "../data/types";
-
 
 const app = express();
 app.post("/upload", (req, res) => {
