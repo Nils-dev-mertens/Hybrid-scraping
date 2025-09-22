@@ -39,4 +39,8 @@ const uploadHandler: RequestHandler = async (req, res) => {const companyname: st
 // Apply multer middleware + your handler
 app.post("/upload", upload.single("file"), uploadHandler);
 
-app.listen(3000, () => console.log("Server running on port 3000"));
+app.get("/", (req, res) => {
+    res.send({status : 200, path : "extensions"})
+});
+
+export default app;

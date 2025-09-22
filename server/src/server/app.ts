@@ -1,9 +1,11 @@
 import express, { Express }  from "express";
 import companies from "../routes/companies";
+import extensions from "../routes/modules";
 
 const app: Express = express();
 
 app.use("/companies", companies);
+app.use("/extensions", extensions);
 
 app.get("/", (req, res) => {
     res.send({status : 200});

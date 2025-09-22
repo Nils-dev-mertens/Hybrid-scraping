@@ -1,3 +1,5 @@
+use hybridscraping;
+
 -- 🔹 Companies
 INSERT IGNORE INTO companies (base_url, company_name) VALUES
 ('https://example.com', 'ExampleCorp'),

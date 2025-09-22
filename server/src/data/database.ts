@@ -1,10 +1,10 @@
-import sql from "mysql2/promise";
+import sql, { Pool } from "mysql2/promise";
 import dotenv from 'dotenv';
 import { AiModel, AiProvider, Company, Extension, InputTypeModule, ReturnTypeModule } from "./types";
 
 dotenv.config();
 
-export const pool = sql.createPool({
+export const pool:Pool = sql.createPool({
   host: process.env.DATABASE_HOST || 'localhost',
   user: process.env.DATABASE_USER || 'roottest',
   password: process.env.DATABASE_PASSWORD || '',
@@ -114,6 +114,15 @@ export async function getAllInputTypes(): Promise<InputTypeModule[] | undefined>
   }
 }
 
+export async function insertInputType(value:string): Promise<number | undefined> {
+  try {
+    const [result] = await pool.query(`INSERT IGNORE INTO input_types (value) VALUES (?)`, [value]);
+    return (result as any).insertId;
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 export async function getAllReturnTypes(): Promise<ReturnTypeModule[] | undefined> {
   try {
     const [rows] = await pool.query('SELECT * FROM return_types');
@@ -121,6 +130,15 @@ export async function getAllReturnTypes(): Promise<ReturnTypeModule[] | undefine
   } catch (error) {
     console.error('Error fetching return types:', error);
     return undefined;
+  }
+}
+
+export async function insertReturnType(value:string): Promise<number | undefined> {
+  try {
+    const [result] = await pool.query(`INSERT IGNORE INTO return_types (value) VALUES (?)`, [value]);
+    return (result as any).insertId;
+  } catch (error) {
+    console.error(error)
   }
 }
 
