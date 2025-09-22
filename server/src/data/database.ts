@@ -1,6 +1,8 @@
 import sql, { Pool } from "mysql2/promise";
 import dotenv from 'dotenv';
 import { AiModel, AiProvider, Company, Extension, InputTypeModule, ReturnTypeModule } from "./types";
+import fs from "fs"
+import path from "path";
 
 dotenv.config();
 
@@ -16,6 +18,7 @@ export const pool:Pool = sql.createPool({
   queueLimit: parseInt(process.env.DATABASE_QUEUE_LIMIT || '0', 10),
   enableKeepAlive: true,
   keepAliveInitialDelay: parseInt(process.env.DATABASE_KEEP_ALIVE_INITIAL_DELAY || '0', 10),
+  multipleStatements: true
 });
 
 // ** companies ** //
@@ -205,4 +208,15 @@ export async function deleteExtension(id: number): Promise<boolean> {
     console.error('Error deleting extension:', error);
     return false;
   }
+}
+
+async function runSqlFile(filePath: string) {
+  const sql = fs.readFileSync(path.resolve(filePath), "utf-8");
+  await pool.query(sql);
+  console.log(`Executed SQL file: ${filePath}`);
+}
+
+export async function setUpDB(){
+  console.log("setup db for usage");
+  await runSqlFile("./src/data/sql/tables.sql");
 }
