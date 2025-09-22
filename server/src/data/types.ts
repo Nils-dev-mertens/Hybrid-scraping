@@ -1,41 +1,48 @@
 export interface Company {
-    Id: number;
-    Baseurl: string;
-    Companyname: string;
+    id: number;
+    base_url: string;
+    company_name: string;
     extensions?: Extension[] | null;
 }
 
 export interface Extension {
-    Id?: number;
-    Extensionstring: string;
-    AiModel: Aimodel | "Human_made"; // 👈 Embedded model object, not just a reference
-    Ai_generated: boolean;
-    Verified: boolean;
-    Tag: string;
-    Last_edited: Date;
-    ElementSelectors: string[];
-    InputType: "Nothing" | "pdf" | "link" | "html"
-    Returntype : "Nothing" |"string" | "file"
+    id: number;
+    company_id: number;
+    ai_model_id: number;
+    action_name: string;
+    ai_generated: boolean;
+    verified: boolean;
+    tag: string;
+    last_edited: Date;
+    query_selectors: string[];
+    input_type_id: number;
+    return_type_id: number;
+
+    // Optional hydrated fields
+    input_type?: InputTypeModule;
+    return_type?: ReturnTypeModule;
 }
 
-export interface ExtensionInput {
-    Extensionstring: string;
-    CompanyName: string;
-    AiModel: Aimodel | "Human_made"; // 👈 Embedded model object, not just a reference
-    Ai_generated: boolean;
-    ElementSelectors: string[];
-    InputType: "Nothing" | "pdf" | "link" | "html"
-    ReturnType : "Nothing" |"string" | "file"
+export interface InputTypeModule {
+    id: number;
+    value: string;
 }
 
-export interface Aimodel {
-    name: string;
+export interface ReturnTypeModule {
+    id: number;
+    value: string;
+}
+
+export interface AiModel {
+    id: number;
+    model_name: string;
     thought: boolean;
-    fast: boolean;
-    Provider: Aiprovider; // 👈 Embedded provider object
+    fast_generation: boolean;
+    ai_provider_id: number;
+    provider?: AiProvider;
 }
 
-export interface Aiprovider {
-    Id: number;
-    Name: string;
+export interface AiProvider {
+    id: number;
+    name: string;
 }
