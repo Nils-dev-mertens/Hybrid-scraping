@@ -13,20 +13,37 @@ function runNext() {
     job && job();
   }
 }
-
-export function executeModule(moduleName: string): Promise<boolean> {
+export function executeModule(moduleName: string): Promise<any> {
   return new Promise((resolve) => {
     const startJob = () => {
       activeWorkers++;
       const workerPath = path.resolve(__dirname, "moduleWorker.js");
       const worker = new Worker(workerPath, { workerData: { moduleName } });
 
-      worker.on("message", (msg) => resolve(msg.success));
-      worker.on("error", () => resolve(false));
+      let resolved = false; // prevent double resolve
+
+      worker.on("message", (msg) => {
+        if (!resolved) {
+          resolved = true;
+          resolve(msg);
+        }
+      });
+
+      worker.on("error", (err) => {
+        if (!resolved) {
+          resolved = true;
+          resolve({ success: false, error: String(err) });
+        }
+      });
+
       worker.on("exit", (code) => {
         activeWorkers--;
         runNext();
-        if (code !== 0) resolve(false);
+        // Only resolve if we haven't already
+        if (!resolved && code !== 0) {
+          resolved = true;
+          resolve({ success: false, error: `Worker exited with code ${code}` });
+        }
       });
     };
 
@@ -34,6 +51,7 @@ export function executeModule(moduleName: string): Promise<boolean> {
     runNext();
   });
 }
+
 
 export async function createNewModule(context:string):Promise<string>{
     const fileString = generateRandomString(20);

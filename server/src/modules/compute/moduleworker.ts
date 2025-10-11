@@ -13,7 +13,7 @@ import { parentPort, workerData } from "worker_threads";
     // If the imported value is a function, call it; otherwise pass it through.
     const response = typeof fn === "function" ? await fn() : fn;
 
-    parentPort?.postMessage({ success: true, response });
+    parentPort?.postMessage({ success: true, response: response });
   } catch (err) {
     parentPort?.postMessage({ success: false, error: String(err) });
   }
