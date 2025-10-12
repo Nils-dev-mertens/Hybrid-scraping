@@ -34,10 +34,16 @@ CREATE TABLE IF NOT EXISTS return_types (
     value VARCHAR(255) NOT NULL UNIQUE
 );
 
+CREATE TABLE IF NOT EXISTS users (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(25) NOT NULL,
+    apikey VARCHAR(64) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS extensions (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    company_id INT NOT NULL,
-    ai_model_id INT NOT NULL,
+    user_id INT NOT NULL,
+    ai_model_id INT,
     action_name VARCHAR(255) NOT NULL,
     ai_generated BOOLEAN NOT NULL,
     verified BOOLEAN NOT NULL,
@@ -46,10 +52,17 @@ CREATE TABLE IF NOT EXISTS extensions (
     query_selectors JSON NOT NULL,
     input_type_id INT NOT NULL,
     return_type_id INT NOT NULL,
-    FOREIGN KEY (company_id) REFERENCES companies(id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (ai_model_id) REFERENCES ai_models(id),
     FOREIGN KEY (input_type_id) REFERENCES input_types(id),
     FOREIGN KEY (return_type_id) REFERENCES return_types(id)
+);
+
+CREATE TABLE IF NOT EXISTS company_extensions (
+	company_id INT NOT NULL,
+    extension_id INT NOT NULL,
+    FOREIGN KEY (extension_id) REFERENCES extensions(id),
+	FOREIGN KEY (company_id) REFERENCES companies(id)
 );
 
 -- 🔹 Seed default input types

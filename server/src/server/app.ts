@@ -1,12 +1,15 @@
 import express, { Express }  from "express";
 import companies from "../routes/companies";
-import extensions from "../routes/modules";
+import modules from "../routes/modules";
 import { setUpDB } from "../data/database";
 
 const app: Express = express();
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use("/companies", companies);
-app.use("/extensions", extensions);
+app.use("/module", modules);
 
 app.get("/", (req, res) => {
     res.send({status : 200});

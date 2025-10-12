@@ -46,7 +46,7 @@ function compileAndReplace(filePath: string): string {
   return jsPath;
 }
 
-const uploadHandler: RequestHandler = async (req, res) => {
+const uploadHandlerFile: RequestHandler = async (req, res) => {
   const file = req.file as Express.Multer.File | undefined;
 
   if (!file) {
@@ -69,22 +69,45 @@ const uploadHandler: RequestHandler = async (req, res) => {
   });
 };
 
-// Apply multer middleware + your handler
-app.post("/upload", upload.single("file"), uploadHandler);
+export const uploadHandlerCode: RequestHandler = async (req, res) => {
+  const { code } = req.body;
+
+  if (typeof code !== "string" || !code.trim()) {
+    res.status(400).json({ error: "Missing or invalid 'code' field" });
+    return;
+  }
+
+  const baseName:string = generateRandomString(20);
+
+  const tsPath = path.join(storageDir, `${baseName}.ts`);
+  fs.writeFileSync(tsPath, code, "utf8");
+
+  const jsFilePath = compileAndReplace(tsPath);
+
+  console.log(`Compiled string input -> ${path.basename(jsFilePath)}`);
+
+  res.json({
+    message: "Code compiled successfully",
+    compiled: path.basename(jsFilePath),
+  });
+};
+
+//opload new module 
+app.post("/upload/file", upload.single("file"), uploadHandlerFile);
+
+app.post("/upload/code", uploadHandlerCode);
 
 app.get("/", (req, res) => {
-    res.send({status : 200, path : "extensions"})
+  res.send({ status: 200, path: "extensions" })
 });
 
-app.get("/execute/:id", async (req, res) => {
-  try {
+app.post("/execute/:id", async (req, res) => {
+  try { 
     const id = req.params.id;
-    console.log(id)
-    const success = await executeModule(id); // wait until worker finishes
+    const inputvalue = req.body.value ?? undefined;
+    const success = await executeModule(id, inputvalue); // wait until worker finishes
     console.log(success);
-    res.json({ success });
-
-    
+    res.json({response : { success }});
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, error: "Execution failed" });
