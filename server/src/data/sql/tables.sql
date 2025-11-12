@@ -42,14 +42,13 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS extensions (
     id INT PRIMARY KEY AUTO_INCREMENT,
+    file_name VARCHAR(25) NOT NULL,
     user_id INT NOT NULL,
     ai_model_id INT,
     action_name VARCHAR(255) NOT NULL,
     ai_generated BOOLEAN NOT NULL,
     verified BOOLEAN NOT NULL,
-    tag VARCHAR(255) NOT NULL,
     last_edited DATETIME NOT NULL,
-    query_selectors JSON NOT NULL,
     input_type_id INT NOT NULL,
     return_type_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),

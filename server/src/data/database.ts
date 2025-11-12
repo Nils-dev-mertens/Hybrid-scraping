@@ -163,32 +163,41 @@ export async function getExtensionsByCompany(company_id: number): Promise<Extens
   }
 }
 
+export async function getAllExtensions() {
+    try {
+    const [result] = await pool.query(
+      `SELECT id,file_name, user_id , action_name, last_edited from extensions`,
+    );
+    return result
+  } catch (error) {
+    console.error('Error adding extension:', error);
+    return undefined;
+  }
+}
+
 export async function addExtension(extension: {
-  company_id: number;
-  ai_model_id: number;
+  ai_model_id: number | null;
+  filename : string;
   action_name: string;
   ai_generated: boolean;
   verified: boolean;
-  tag: string;
   last_edited: Date;
-  query_selectors: string[];
   input_type_id: number;
   return_type_id: number;
 }): Promise<number | undefined> {
   try {
     const [result] = await pool.query(
       `INSERT INTO extensions
-      (company_id, ai_model_id, action_name, ai_generated, verified, tag, last_edited, query_selectors, input_type_id, return_type_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      (user_id, file_name, ai_model_id, action_name, ai_generated, verified, last_edited, input_type_id, return_type_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
-        extension.company_id,
+        1,
+        extension.filename,
         extension.ai_model_id,
         extension.action_name,
         extension.ai_generated,
         extension.verified,
-        extension.tag,
         extension.last_edited,
-        JSON.stringify(extension.query_selectors),
         extension.input_type_id,
         extension.return_type_id,
       ]

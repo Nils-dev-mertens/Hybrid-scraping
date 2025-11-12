@@ -2,25 +2,45 @@ export interface Company {
     id: number;
     base_url: string;
     company_name: string;
+    // extensions are linked via the company_extensions join table
+    extensions?: Extension[] | null;
+}
+
+export interface User {
+    id: number;
+    username: string;
+    apikey: string;
     extensions?: Extension[] | null;
 }
 
 export interface Extension {
     id: number;
-    company_id: number;
-    ai_model_id: number;
+    // matches DB column `file_name`
+    file_name: string;
+    // owner of the extension (users.id)
+    user_id: number;
+    // ai_model_id can be null in the DB
+    ai_model_id?: number | null;
     action_name: string;
     ai_generated: boolean;
     verified: boolean;
-    tag: string;
     last_edited: Date;
-    query_selectors: string[];
+    // foreign keys
     input_type_id: number;
     return_type_id: number;
+
+    // Not stored directly on the extensions table, but useful when joined
+    // company relations exist in `company_extensions`
+    company_ids: number;
+
+    // optional runtime-only fields
+    query_selectors?: string[];
 
     // Optional hydrated fields
     input_type?: InputTypeModule;
     return_type?: ReturnTypeModule;
+    ai_model?: AiModel | null;
+    user?: User;
 }
 
 export interface InputTypeModule {
